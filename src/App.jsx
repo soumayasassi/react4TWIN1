@@ -8,7 +8,7 @@ import MyC from "./Components/MyC" ;
 import CounterF from "./Components/CounterF";
 import ListManagerF from "./Components/ListManagerF";
 import ListM from "./Components/ListM";
-import ColorBox from "./Components/ColorBox";
+import Events from "./Components/Events" ; 
 
 function App() {
 const colors = ["#113f67" , "#38598b" , "#f70776"]
@@ -16,7 +16,7 @@ const initialcolor = "#f8f8f8"
 
   return (
     <>
-<ColorBox colorOptions={colors} initialColor={initialcolor}></ColorBox>
+<Events></Events>
     </>
   );
 }
