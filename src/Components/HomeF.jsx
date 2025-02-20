@@ -1,5 +1,8 @@
+import { useParams } from "react-router-dom";
+
 function HomeF() {
-    return (<> functional component </>  );
+    const {username} = useParams() ;
+    return (<> Hello {username} </>  );
 }
 
 export default HomeF;

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 function Event(props) {
   const [event, setEvent] = useState(props.event);
@@ -26,6 +27,7 @@ function Event(props) {
           alt="Event"
         />
         <div className="px-6 py-4">
+        <p className="text-gray-700 text-base"><Link to={`/events/details/${event.id}`}>{event.name}</Link> </p>
           <p className="text-gray-700 text-base">Price: {event.price}</p>
           <div className="pt-4 pb-2">
             <p>Number of tickets: {event.nbTickets}</p>
