@@ -5,7 +5,6 @@ function Event(props) {
   const [event, setEvent] = useState(props.event);
   const showAlert = props.showalert;
   const [msg, setMsg] = useState("like");
-  console.log(showAlert);
   const change = () => {
     msg === "like" ? setMsg("dislike") : setMsg("like");
   };
@@ -44,6 +43,15 @@ function Event(props) {
             <button className="btn btn-primary mt-4" onClick={change}>
               {msg}
             </button>
+
+            <button  className="btn btn-success mt-4"  >
+            <Link
+              to={`/events/update/${event.id}`}
+              style={{ textDecoration: "none", color: "white" }}
+            >
+              Update
+            </Link>
+          </button>
           </div>
         </div>
       </div>
