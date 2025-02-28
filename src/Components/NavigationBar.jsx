@@ -19,6 +19,19 @@ function NavigationBar() {
           
         </Nav>
       </Navbar.Collapse>
+      <Navbar.Collapse id="basic-navbar-nav">
+        <Nav className="ms-auto">
+          <NavLink 
+            to="/events/add" 
+            className={({ isActive }) => 
+              isActive ? "nav-link active text-light" : "nav-link text-light"
+            }
+          >
+            Add New Event
+          </NavLink>
+          
+        </Nav>
+      </Navbar.Collapse>
     </Navbar>
   );
 }

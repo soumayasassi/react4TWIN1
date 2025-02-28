@@ -1,22 +1,21 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Button, Container, Form, Row, Col } from "react-bootstrap";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button, Container, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { addEvent } from "../service/api";
-import { EventSchema } from "../schema";
-import { zodResolver } from "@hookform/resolvers/zod";
-function AddEvent() {
- 
-  const Form = () => {
-    const {
-      register,
-      handleSubmit,
-      formState: { errors },
-    } = useForm({
-      resolver: zodResolver(EventSchema),
-    });
-  }
+import { schema } from "../schema";
 
+function AddEvent() {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(schema),
+  });
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
@@ -25,16 +24,15 @@ function AddEvent() {
       description: data.description,
       price: data.price,
       nbTickets: data.nbTickets,
-      img: data.img[0] ? data.img[0].name : null,  
+      img: data.img[0] ? data.img[0].name : null,
     };
-    
+    console.log(data);
     const res = await addEvent(eventData);
     if (res.status === 201) {
       navigate("/events/list");
     }
-    
   };
-  
+
   return (
     <Container style={{ marginTop: "30px" }}>
       <h2>Add a new Event to your Event List</h2>
@@ -51,10 +49,9 @@ function AddEvent() {
               padding: "10px",
               width: "100%",
             }}
-            register={register}
-            error={errors.name}
-            
+            {...register("name")}
           />
+          {errors.name && <p style={{ color: "red" }}>{errors.name.message}</p>}
         </Form.Group>
 
         <Form.Group className="mb-3">
@@ -70,9 +67,11 @@ function AddEvent() {
               padding: "10px",
               width: "100%",
             }}
-            register={register}
-            error={errors.description}
+            {...register("description")}
           />
+          {errors.description && (
+            <p style={{ color: "red" }}>{errors.description.message}</p>
+          )}
         </Form.Group>
 
         <Form.Group className="mb-3">
@@ -86,9 +85,11 @@ function AddEvent() {
               padding: "10px",
               width: "100%",
             }}
-            register={register}
-              error={errors.price}
+            {...register("price", { valueAsNumber: true })}
           />
+          {errors.price && (
+            <p style={{ color: "red" }}>{errors.price.message}</p>
+          )}
         </Form.Group>
 
         <Form.Group className="mb-3">
@@ -102,9 +103,11 @@ function AddEvent() {
               padding: "10px",
               width: "100%",
             }}
-            register={register}
-              error={errors.nbTickets}
+            {...register("nbTickets", { valueAsNumber: true })}
           />
+          {errors.nbTickets && (
+            <p style={{ color: "red" }}>{errors.nbTickets.message}</p>
+          )}
         </Form.Group>
 
         <Form.Group className="mb-3">
@@ -118,9 +121,9 @@ function AddEvent() {
               padding: "10px",
               width: "100%",
             }}
-            register={register}
-            error={errors.img}
+            {...register("img")}
           />
+          {errors.img && <p style={{ color: "red" }}>{errors.img.message}</p>}
         </Form.Group>
 
         <Button variant="primary" type="submit">

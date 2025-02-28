@@ -1,32 +1,22 @@
 {
   "events": [
     {
-      "id": "1",
-      "name": "FFFFestival international de Carthage",
+      "name": "Festival international de Carthage",
       "description": "Le lorem ipsum est, en imprimerie, une suite de mots sans signification utilisée à titre provisoire pour calibrer une mise en page",
-      "img": "event1.jpg",
       "price": 30,
       "nbTickets": 10,
-      "nbParticipants": 10,
-      "like": false
+      "img": "event1.jpg",
+      "id": "1"
     },
     {
       "id": "2",
-      "name": "Festival de la médina de Tunis",
+      "name": "Festival de la médina de Tunissss",
       "description": "Le lorem ipsum est, en imprimerie, une suite de mots sans signification utilisée à titre provisoire pour calibrer une mise en page",
       "img": "event2.jpg",
       "price": 15,
-      "nbTickets": 9,
-      "nbParticipants": 21,
+      "nbTickets": 2,
+      "nbParticipants": 36,
       "like": true
-    },
-    {
-      "id": "e410",
-      "name": "gfgfg",
-      "description": "zsqdsfdf",
-      "price": "15",
-      "nbTickets": "15",
-      "img": "placeholder.jpg"
     }
   ]
 }

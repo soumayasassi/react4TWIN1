@@ -1,151 +1,108 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Button, Container, Form, Row, Col } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import { editEvent, getallEvents } from "../service/api";
-import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
-function UpdateEvent() {
-  const param = useParams();
-  const [eventItem, setEventItem] = useState({
-    name: "",
-    description: "",
-    img: "",
-    price: 0,
-    nbTickets: 0,
-    nbParticipants: 0,
-    like: false,
-  });
-  useEffect(() => {
-    const fetchEvent = async () => {
-      const eventResult = await getallEvents(param.id);
-      setEventItem(eventResult.data);
-    };
-    fetchEvent();
-  }, []);
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button, Container, Form } from "react-bootstrap";
+import { useNavigate, useParams } from "react-router-dom";
+import { getallEvents, editEvent } from "../service/api";
+import { schema } from "../schema";
 
+function UpdateEvent() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [event, setEvent] = useState(null);
   const {
     register,
     handleSubmit,
-    formState: { errors },
     reset,
+    setValue,
+    formState: { errors },
   } = useForm({
-    defaultValues: eventItem,
+    resolver: zodResolver(schema),
   });
-  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchEvent = async () => {
+      const res = await getallEvents(id);
+      if (res.status === 200) {
+        const eventData = res.data;
+        setEvent(eventData);
+        reset(eventData);
+      }
+    };
+    fetchEvent();
+  }, [id, reset]);
 
   const onSubmit = async (data) => {
-    const eventData = {
+    const updatedEvent = {
       name: data.name,
       description: data.description,
       price: data.price,
       nbTickets: data.nbTickets,
-      img: data.img[0] ? data.img[0].name : null,
+      img: data.img && data.img[0] ? data.img[0].name : event.img,
     };
 
-    const eventResult = await editEvent(param.id, eventItem);
-    if (eventResult.status === 200) {
+    const res = await editEvent(id, updatedEvent);
+    if (res.status === 200) {
       navigate("/events/list");
     }
   };
 
+  if (!event) return <p>Loading...</p>;
+
   return (
     <Container style={{ marginTop: "30px" }}>
-      <h2>Add a new Event to your Event List</h2>
+      <h2>Update Event</h2>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Form.Group className="mb-3">
           <Form.Label>Name</Form.Label>
-          <Form.Control
-            name="name"
-            type="text"
-            placeholder="Enter a Name"
-            value={eventItem.name}
-            style={{
-              border: "2px solid #ccc",
-              borderRadius: "5px",
-              padding: "10px",
-              width: "100%",
-            }}
-            {...register("name")}
-          />
+          <Form.Control type="text" {...register("name")} />
+          {errors.name && <p style={{ color: "red" }}>{errors.name.message}</p>}
         </Form.Group>
 
         <Form.Group className="mb-3">
           <Form.Label>Description</Form.Label>
-          <Form.Control
-            as="textarea"
-            rows={3}
-            placeholder="Enter description"
-            value={eventItem.description}
-            name="description"
-            style={{
-              border: "2px solid #ccc",
-              borderRadius: "5px",
-              padding: "10px",
-              width: "100%",
-            }}
-            {...register("description")}
-          />
+          <Form.Control as="textarea" rows={3} {...register("description")} />
+          {errors.description && (
+            <p style={{ color: "red" }}>{errors.description.message}</p>
+          )}
         </Form.Group>
 
         <Form.Group className="mb-3">
           <Form.Label>Price</Form.Label>
           <Form.Control
             type="number"
-            name="price"
-            value={eventItem.price}
-            style={{
-              border: "2px solid #ccc",
-              borderRadius: "5px",
-              padding: "10px",
-              width: "100%",
-            }}
-            {...register("price")}
+            {...register("price", { valueAsNumber: true })}
           />
+          {errors.price && (
+            <p style={{ color: "red" }}>{errors.price.message}</p>
+          )}
         </Form.Group>
 
         <Form.Group className="mb-3">
           <Form.Label>Number of Tickets</Form.Label>
           <Form.Control
             type="number"
-            name="nbTickets"
-            value={eventItem.nbTickets}
-            style={{
-              border: "2px solid #ccc",
-              borderRadius: "5px",
-              padding: "10px",
-              width: "100%",
-            }}
-            {...register("nbTickets")}
+            {...register("nbTickets", { valueAsNumber: true })}
           />
+          {errors.nbTickets && (
+            <p style={{ color: "red" }}>{errors.nbTickets.message}</p>
+          )}
         </Form.Group>
 
         <Form.Group className="mb-3">
           <Form.Label>Image</Form.Label>
-          <Form.Control
-            type="file"
-            name="img"
-            style={{
-              border: "2px solid #ccc",
-              borderRadius: "5px",
-              padding: "10px",
-              width: "100%",
-            }}
-            {...register("img")}
-          />
+          <Form.Control type="file" {...register("img")} />
+          {errors.img && <p style={{ color: "red" }}>{errors.img.message}</p>}
         </Form.Group>
 
         <Button variant="primary" type="submit">
           Update Event
         </Button>
-
         <Button
-          variant="btn btn-secondary"
-          type="reset"
-          onClick={() => {
-            reset();
-            navigate("/events/add");
-          }}
+          variant="secondary"
+          onClick={() => navigate("/events/list")}
+          style={{ marginLeft: "10px" }}
         >
           Cancel
         </Button>

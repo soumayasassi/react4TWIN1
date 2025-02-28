@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 function Event(props) {
@@ -26,7 +27,9 @@ function Event(props) {
           alt="Event"
         />
         <div className="px-6 py-4">
-        <p className="text-gray-700 text-base"><Link to={`/events/details/${event.id}`}>{event.name}</Link> </p>
+          <p className="text-gray-700 text-base">
+            <Link to={`/events/details/${event.id}`}>{event.name}</Link>{" "}
+          </p>
           <p className="text-gray-700 text-base">Price: {event.price}</p>
           <div className="pt-4 pb-2">
             <p>Number of tickets: {event.nbTickets}</p>
@@ -44,14 +47,20 @@ function Event(props) {
               {msg}
             </button>
 
-            <button  className="btn btn-success mt-4"  >
-            <Link
-              to={`/events/update/${event.id}`}
-              style={{ textDecoration: "none", color: "white" }}
+            <button className="btn btn-success mt-4">
+              <Link
+                to={`/events/update/${event.id}`}
+                style={{ textDecoration: "none", color: "white" }}
+              >
+                Update
+              </Link>
+            </button>
+            <button
+              className="btn btn-danger mt-4"
+              onClick={() => props.onDelete(event.id)}
             >
-              Update
-            </Link>
-          </button>
+              Delete
+            </button>
           </div>
         </div>
       </div>
