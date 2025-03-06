@@ -1,31 +1,25 @@
 import { useState, useEffect } from "react";
-import events from "../data/events.json";
 import Event from "./Event";
 import { Alert } from "react-bootstrap";
-import { deleteEvent, getallEvents } from "../service/api";
 import { useNavigate } from "react-router-dom";
+import useEventStore from "../stores/useEventStore";
+import FavoriteEvents from "./FavoriteEvents";
 function Events() {
   const [showalert, setShowAlert] = useState(false);
-  const [events, setEvents] = useState([]);
+  const {events, fetchEvents , deleteEvent} = useEventStore();
   const navigate = useNavigate();
   const handleDelete = async (eventId) => {
-   const res =  await deleteEvent(eventId);
-
-    setEvents(events.filter((eventItem) => eventItem.id !== eventId));
-    if (res.status === 200) {
-      navigate("/events/list");
-    }
+  
+    deleteEvent(eventId);
+    
   };
 
   useEffect(() => {
-    fetchData();
+    fetchEvents();
+    console.log(events) ; 
   }, []);
 
-  const fetchData = async () => {
-    const response = await getallEvents();
-    console.log(response.data);
-    setEvents(response.data);
-  };
+  
   const showAlert = () => {
     setShowAlert(true);
     setTimeout(() => {
@@ -44,6 +38,7 @@ function Events() {
           onDelete={handleDelete}
         ></Event>
       ))}
+      {  <FavoriteEvents /> }
     </>
   );
 }

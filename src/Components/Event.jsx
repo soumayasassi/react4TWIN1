@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import useFavoriteStore from "../stores/useFavoriteStore";
 
 function Event(props) {
   const [event, setEvent] = useState(props.event);
+  const { favoriteEvents, addFavorite, removeFavorite } = useFavoriteStore();
+  const isFavorite = favoriteEvents.some((fav) => fav.id === event.id);
   const showAlert = props.showalert;
   const [msg, setMsg] = useState("like");
   const change = () => {
@@ -61,6 +64,14 @@ function Event(props) {
             >
               Delete
             </button>
+            <button
+          className={isFavorite ? "btn btn-danger mt-4" : "btn btn-primary mt-4"}
+          onClick={() =>
+            isFavorite ? removeFavorite(event.id) : addFavorite(event)
+          }
+        >
+          {isFavorite ? "Retirer des Favoris" : "Ajouter aux Favoris"}
+        </button>
           </div>
         </div>
       </div>

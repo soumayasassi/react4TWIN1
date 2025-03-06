@@ -1,37 +1,34 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Container, Form } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
-import { getallEvents, editEvent } from "../service/api";
+import useEventStore from "../stores/useEventStore";
 import { schema } from "../schema";
 
 function UpdateEvent() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [event, setEvent] = useState(null);
+  const { events, fetchEvents, editEvent } = useEventStore();
+  
+  const event = events.find((e) => e.id === id);
+
   const {
     register,
     handleSubmit,
     reset,
-    setValue,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(schema),
   });
 
   useEffect(() => {
-    const fetchEvent = async () => {
-      const res = await getallEvents(id);
-      if (res.status === 200) {
-        const eventData = res.data;
-        setEvent(eventData);
-        reset(eventData);
-      }
-    };
-    fetchEvent();
-  }, [id, reset]);
+    if (!event) {
+      fetchEvents();
+    } else {
+      reset(event);
+    }
+  }, [event, fetchEvents, reset]);
 
   const onSubmit = async (data) => {
     const updatedEvent = {
@@ -39,13 +36,11 @@ function UpdateEvent() {
       description: data.description,
       price: data.price,
       nbTickets: data.nbTickets,
-      img: data.img && data.img[0] ? data.img[0].name : event.img,
+      img: data.img && data.img[0] ? data.img[0].name : event?.img,
     };
 
-    const res = await editEvent(id, updatedEvent);
-    if (res.status === 200) {
-      navigate("/events/list");
-    }
+    await editEvent(id, updatedEvent);
+    navigate("/events/list");
   };
 
   if (!event) return <p>Loading...</p>;
@@ -70,10 +65,7 @@ function UpdateEvent() {
 
         <Form.Group className="mb-3">
           <Form.Label>Price</Form.Label>
-          <Form.Control
-            type="number"
-            {...register("price", { valueAsNumber: true })}
-          />
+          <Form.Control type="number" {...register("price", { valueAsNumber: true })} />
           {errors.price && (
             <p style={{ color: "red" }}>{errors.price.message}</p>
           )}
@@ -81,10 +73,7 @@ function UpdateEvent() {
 
         <Form.Group className="mb-3">
           <Form.Label>Number of Tickets</Form.Label>
-          <Form.Control
-            type="number"
-            {...register("nbTickets", { valueAsNumber: true })}
-          />
+          <Form.Control type="number" {...register("nbTickets", { valueAsNumber: true })} />
           {errors.nbTickets && (
             <p style={{ color: "red" }}>{errors.nbTickets.message}</p>
           )}

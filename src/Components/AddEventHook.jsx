@@ -1,13 +1,13 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Container, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { addEvent } from "../service/api";
+import useEventStore from "../stores/useEventStore";
 import { schema } from "../schema";
 
 function AddEvent() {
+  const { addEvent } = useEventStore();
   const {
     register,
     handleSubmit,
@@ -26,11 +26,9 @@ function AddEvent() {
       nbTickets: data.nbTickets,
       img: data.img[0] ? data.img[0].name : null,
     };
-    console.log(data);
-    const res = await addEvent(eventData);
-    if (res.status === 201) {
-      navigate("/events/list");
-    }
+
+    await addEvent(eventData);
+    navigate("/events/list");
   };
 
   return (
@@ -39,90 +37,31 @@ function AddEvent() {
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Form.Group className="mb-3">
           <Form.Label>Name</Form.Label>
-          <Form.Control
-            name="name"
-            type="text"
-            placeholder="Enter a Name"
-            style={{
-              border: "2px solid #ccc",
-              borderRadius: "5px",
-              padding: "10px",
-              width: "100%",
-            }}
-            {...register("name")}
-          />
+          <Form.Control type="text" placeholder="Enter a Name" {...register("name")} />
           {errors.name && <p style={{ color: "red" }}>{errors.name.message}</p>}
         </Form.Group>
 
         <Form.Group className="mb-3">
           <Form.Label>Description</Form.Label>
-          <Form.Control
-            as="textarea"
-            rows={3}
-            placeholder="Enter description"
-            name="description"
-            style={{
-              border: "2px solid #ccc",
-              borderRadius: "5px",
-              padding: "10px",
-              width: "100%",
-            }}
-            {...register("description")}
-          />
-          {errors.description && (
-            <p style={{ color: "red" }}>{errors.description.message}</p>
-          )}
+          <Form.Control as="textarea" rows={3} placeholder="Enter description" {...register("description")} />
+          {errors.description && <p style={{ color: "red" }}>{errors.description.message}</p>}
         </Form.Group>
 
         <Form.Group className="mb-3">
           <Form.Label>Price</Form.Label>
-          <Form.Control
-            type="number"
-            name="price"
-            style={{
-              border: "2px solid #ccc",
-              borderRadius: "5px",
-              padding: "10px",
-              width: "100%",
-            }}
-            {...register("price", { valueAsNumber: true })}
-          />
-          {errors.price && (
-            <p style={{ color: "red" }}>{errors.price.message}</p>
-          )}
+          <Form.Control type="number" {...register("price", { valueAsNumber: true })} />
+          {errors.price && <p style={{ color: "red" }}>{errors.price.message}</p>}
         </Form.Group>
 
         <Form.Group className="mb-3">
           <Form.Label>Number of Tickets</Form.Label>
-          <Form.Control
-            type="number"
-            name="nbTickets"
-            style={{
-              border: "2px solid #ccc",
-              borderRadius: "5px",
-              padding: "10px",
-              width: "100%",
-            }}
-            {...register("nbTickets", { valueAsNumber: true })}
-          />
-          {errors.nbTickets && (
-            <p style={{ color: "red" }}>{errors.nbTickets.message}</p>
-          )}
+          <Form.Control type="number" {...register("nbTickets", { valueAsNumber: true })} />
+          {errors.nbTickets && <p style={{ color: "red" }}>{errors.nbTickets.message}</p>}
         </Form.Group>
 
         <Form.Group className="mb-3">
           <Form.Label>Image</Form.Label>
-          <Form.Control
-            type="file"
-            name="img"
-            style={{
-              border: "2px solid #ccc",
-              borderRadius: "5px",
-              padding: "10px",
-              width: "100%",
-            }}
-            {...register("img")}
-          />
+          <Form.Control type="file" {...register("img")} />
           {errors.img && <p style={{ color: "red" }}>{errors.img.message}</p>}
         </Form.Group>
 
@@ -131,12 +70,13 @@ function AddEvent() {
         </Button>
 
         <Button
-          variant="btn btn-secondary"
+          variant="secondary"
           type="reset"
           onClick={() => {
             reset();
             navigate("/events/add");
           }}
+          style={{ marginLeft: "10px" }}
         >
           Cancel
         </Button>
